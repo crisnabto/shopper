@@ -12,7 +12,7 @@ const validateFile = (req, res, next) => {
   if (!originalname.endsWith('.csv')) {
     const errorMessage = 'O arquivo enviado não é um arquivo CSV.';
       const result = [{ errorMessage }];
-      return res.json(result);
+      res.json(result);
   }
 
   streamifier.createReadStream(buffer)
@@ -22,7 +22,7 @@ const validateFile = (req, res, next) => {
     if (!headers.includes('product_code') || !headers.includes('new_price')) {
       const errorMessage = 'O arquivo CSV enviado não contém as colunas "product_code" e/ou "new_price".';
       const results = { errorMessage };
-      return res.json(results);
+      res.json(results);
     }
   })
   .on('data', async (data) => {
@@ -41,10 +41,15 @@ const validateFile = (req, res, next) => {
     // Caso contrário, continua com a execução normal
     const validatedResults = results.map(async (data) => {
       const product = await productsModel.getProductByCode(data.product_code);
-      console.log(product);
-      const validation = validatePrice(product, data.new_price);
-      if (validation.error) {
-        data.errorMessage = validation.error;
+      if (product[0].length === 0) {
+        data.errorMessage = 'Um ou mais produtos não existe(m).';
+      } else {
+        const validation = validatePrice(product, data.new_price);
+        if (validation.error) {
+          data.errorMessage = validation.error;
+        } else {
+          data.validMessage = 'O arquivo foi validado com sucesso! Revise os dados e clique em Atualizar para salvar as alterações.'
+        }
       }
       return data;
     });
@@ -55,7 +60,7 @@ const validateFile = (req, res, next) => {
       return res.json(validatedData);
     }
 
-    results[0].validMessage = 'O arquivo foi validado com sucesso! Revise os dados e clique em Atualizar para salvar as alterações.'
+    // results[0].validMessage = 'O arquivo foi validado com sucesso! Revise os dados e clique em Atualizar para salvar as alterações.'
     req.body = results;
     return res.json(results);
     // next();
@@ -68,12 +73,12 @@ const validateFile = (req, res, next) => {
 
 
 const validatePrice = (product, newPrice) => {
-  const { sales_price } = product[0][0];
+  const { sales_price, cost_price } = product[0][0];
 
   const MIN = parseFloat(sales_price * 0.9).toFixed(2);
   const MAX = parseFloat(sales_price * 1.1).toFixed(2);
 
-  if (newPrice < sales_price) return { error: 'O preço de venda não pode ser menor que o preço de custo' };
+  if (newPrice < cost_price) return { error: 'O preço de venda não pode ser menor que o preço de custo' };
   if (newPrice > MAX || newPrice < MIN) return { error: 'O preço de venda está fora da variação de 10% permitida' };
 
   return {};

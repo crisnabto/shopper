@@ -1,0 +1,161 @@
+/* Definição de cores */
+:root {
+    --green: #36B37E;
+    --gray-light: #F4F4F4;
+    --gray-medium: #B3B3B3;
+    --gray-dark: #333333;
+}
+
+/* Estilos globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--gray-light);
+    color: var(--gray-dark);
+}
+
+.edit-container {
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: center;
+    margin: 1rem;
+}
+
+.product-card {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    color: #444;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    text-align: left;
+    width: 50%;
+    margin: auto;
+}
+
+.product-card p {
+    margin: 10px 0;
+}
+
+.product-card p:first-child {
+    font-weight: bold;
+}
+
+.product-card p:nth-child(1) {
+    color: #36b37e;
+}
+
+.export-csv-container {
+    display: flex;
+    justify-content: center;
+}
+
+.csv-link {
+    display: inline-block;
+    padding: 10px;
+    background-color: #36B37E;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.csv-link:hover {
+    background-color: #2EA566;
+}
+
+/* .product-card p:nth-child(even) {
+    color: #666;
+  } */
+
+
+
+h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 1rem;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1rem, 0;
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    margin: 1rem;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+.table-container {
+    border: 1px solid red;
+}
+
+th,
+td {
+    padding: 0.5rem;
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+    border-bottom: 2px solid var(--gray-medium);
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--gray-light);
+}
+
+input[type="file"],
+button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    background-color: var(--gray-medium);
+    color: white;
+}
+
+button {
+    background-color: var(--green);
+    color: white;
+    margin-left: 1rem;
+}
+
+button:hover {
+    background-color: #2EA566;
+}
+
+button:disabled {
+    background-color: var(--gray-medium);
+    cursor: not-allowed;
+}
+
+tr td:nth-child(odd) {
+    font-weight: bold;
+}
+
+tr td:nth-child(even) {
+    font-style: italic;
+}
+
+/* td[data-error="true"] {
+    color: red;
+} */

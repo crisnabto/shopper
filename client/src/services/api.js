@@ -15,7 +15,6 @@ export const getAllProducts = async () => {
 
 export const getProductByCode = async (productCode) => {
   const result = await api.get(`/products/${productCode}`);
-  console.log('result');
   return result.data;
 }
 
@@ -25,6 +24,7 @@ export const validateFile = async (formData) => {
 }
 
 export const updatePrice = async (productCode, newPrice) => {
-  const result = await api.put('/products/:code');
+  console.log(newPrice, 'axios');
+  const result = await api.put(`/products/${productCode}`, { price: newPrice });
   return result.data;
 }

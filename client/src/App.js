@@ -5,7 +5,7 @@ import Home from './pages/Home';
 function App() {
   return (
     <Switch>
-      <Route exact path = "/home" component={Home}></Route>
+      <Route exact path = "/" component={Home}></Route>
     </Switch>
   );
 }

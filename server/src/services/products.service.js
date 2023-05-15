@@ -20,8 +20,8 @@ const updatePrice = async (productCode, newPrice) => {
   const validCode = await getProductByCode(productCode);
   if (validCode.error) return { type: 404, message: validCode.error };
 
-  const validData = validatePrice(validCode.message, newPrice);
-  if (validData) return { type: 404, message: validData }
+  // const validData = validatePrice(validCode.message, newPrice);
+  // if (validData) return { type: 404, message: validData }
 
   // const product = await getProductByCode(productCode, newPrice);
   // console.log(product.message[0]);
