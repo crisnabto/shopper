@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { validateFile, getProductByCode, updatePrice } from '../services/api';
 import { CSVLink } from 'react-csv';
 import './updateTool.css';
+import logo from '../images/logo.png';
 
 function UpdateTool() {
   const [file, setFile] = useState(null);
@@ -11,6 +13,24 @@ function UpdateTool() {
   const [validFile, setValidFile] = useState(false);
   const [validateButtonClick, setValidateButtonClick] = useState(false);
   const [updatedProduct, setUpdatedProduct] = useState([]);
+  const [newPrice, setNewPrice] = useState([]);
+
+  useEffect(() => {
+    const calculateNewPrice = () => {
+      let newPriceArr = [];
+      pack.forEach((pac, pacIndex) => {
+        let total = 0;
+        pac.forEach((p, index) => {
+          const new_price = messages.find(obj => obj.product_code === p.product_id.toString())?.new_price;
+          total += (new_price || p.sales_price) * p.qty;
+        });
+        newPriceArr.push(total);
+      });
+      setNewPrice(newPriceArr);
+    };
+
+    calculateNewPrice();
+  }, [pack, messages]);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -24,10 +44,8 @@ function UpdateTool() {
       const response = await validateFile(formData);
       const result = response.data;
       if (result.errorMessage) alert('erro')
-      console.log(result);
 
       setValidFile(!result.find(obj => obj.errorMessage))
-
 
       setMessages(result);
 
@@ -38,7 +56,6 @@ function UpdateTool() {
       const promises = result.map(async (res) => {
         const code = res.product_code;
         const getProduct = await getProductByCode(code);
-        console.log(getProduct);
         if (getProduct.message) {
           alert('Um ou mais produtos não existe(m).')
         } else {
@@ -85,15 +102,17 @@ function UpdateTool() {
         new_price: messages.find(obj => obj.product_code === prod.code.toString())?.new_price
       }
       allUpdates.push(newProd);
+      return null;
     })
     setUpdatedProduct(allUpdates);
   };
 
-
-
   return (
     <div>
-      <h1>Ferramenta de Edição de Preços</h1>
+      <div className="container">
+        <img src={logo} alt="shopper logo" width="150px" />
+        <h1>Ferramenta de Edição de Preços</h1>
+      </div>
       <div className='edit-container'>
         <input type="file" onChange={handleFileChange} />
         <button onClick={handleValidationButtonClick}>Validar</button>
@@ -109,10 +128,14 @@ function UpdateTool() {
             ? messages.find(obj => obj.errorMessage).errorMessage + '  🚫'
             : messages.find(obj => obj).validMessage + '  ✅'}
         </p>
-      ) : <p style={{
-        borderBottom: '4px solid #36B37E',
-        paddingBottom: '3px'
-      }}>As alterações foram salvas com sucesso!</p>}
+      ) : (
+        updatedProduct.length > 0 && (
+          <p style={{
+            borderBottom: '4px solid #36B37E',
+            paddingBottom: '3px'
+          }}>As alterações foram salvas com sucesso!</p>
+        )
+      )}
 
       <div>
         {products.length > 0 && updatedProduct.length === 0 && (
@@ -137,7 +160,6 @@ function UpdateTool() {
                     <td>{p.name}</td>
                     <td>{p.cost_price}</td>
                     <td>{p.sales_price}</td>
-                    {/* <td>{messages[0].new_price}</td> */}
                     <td>
                       {messages.find(obj => obj.product_code === p.code.toString())?.new_price}
                     </td>
@@ -149,7 +171,6 @@ function UpdateTool() {
               </tbody>
             </table>
           </div>
-
         )}
 
         {pack.length > 0 && updatedProduct.length === 0 && (
@@ -165,33 +186,41 @@ function UpdateTool() {
                   <th>Quantidade</th>
                   <th>Novo Preço do Produto</th>
                   <th>Regra quebrada</th>
-                  <th colSpan={pack.length}>Preco atual do Pack</th>
+                  <th rowSpan={pack.length}>Preço atual do Pack</th>
                   <th colSpan={pack.length}>Novo Preço do Pack</th>
                 </tr>
               </thead>
+
               <tbody>
+                {pack.map((pac, pacIndex) => (
+                  <>
+                    {pac.map((p, index) => (
+                      <tr key={index}>
+                        <td>{p.pack_id}</td>
+                        <td>{p.name}</td>
+                        <td>{p.cost_price}</td>
+                        <td>{p.sales_price}</td>
+                        <td className={`quantity-${pacIndex}-${index}`}>{p.qty}</td>
+                        <td className={`new-price-${pacIndex}-${index}`}>
+                          {messages.find(obj => obj.product_code === p.product_id.toString())?.new_price || '-'}
+                        </td>
+                        <td style={{ border: messages.find(obj => obj.product_code === p.product_id.toString())?.errorMessage ? '2px solid red' : 'none' }}>
+                          {messages.find(obj => obj.product_code === p.product_id.toString())?.errorMessage || '-'}
+                        </td>
 
-                {pack.map((pac) => (
-                  pac.map((p, index) => (
-                    <tr key={index}>
-                      <td>{p.pack_id}</td>
-                      <td>{p.name}</td>
-                      <td>{p.cost_price}</td>
-                      <td>{p.sales_price}</td>
-                      <td>{p.qty}</td>
-                      <td>
-                        {messages.find(obj => obj.product_code === p.product_id.toString())?.new_price || '-'}
-                      </td>
-                      <td style={{ border: messages.find(obj => obj.product_code === p.product_id.toString())?.errorMessage ? '2px solid red' : 'none' }}>
-                        {messages.find(obj => obj.product_code === p.product_id.toString())?.errorMessage || '-'}
-                      </td>
+                        {index === 0 && <td rowSpan={pac.length}>{p.total_price}</td>}
+                        {index === 0 && <td rowSpan={pac.length}>{newPrice[pacIndex] || '-'}</td>}
+                      </tr>
+                    ))}
 
-                      {index === 0 && <td rowSpan={pac.length}>{p.total_price}</td>}
-                      {index === 0 && <td rowSpan={pac.length}>{p.sales_price * p.qty}</td>}
-                    </tr>
-
-                  ))
+                    {pacIndex !== pack.length - 1 && (
+                      <tr>
+                        <td colSpan={11} style={{ borderBottom: '1px solid #ccc' }}></td>
+                      </tr>
+                    )}
+                  </>
                 ))}
+
               </tbody>
             </table>
           </div>
@@ -216,7 +245,6 @@ function UpdateTool() {
           ))}
         </div>
       )}
-
     </div>
   )
 }

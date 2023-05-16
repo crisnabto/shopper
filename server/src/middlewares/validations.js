@@ -2,7 +2,6 @@ const fs = require('fs');
 const streamifier = require('streamifier');
 const csv = require('csv-parser');
 const productsModel = require('../models/products.model');
-// const { rejects } = require('assert');
 
 const validateFile = (req, res, next) => {
   const results = [];
@@ -60,17 +59,13 @@ const validateFile = (req, res, next) => {
       return res.json(validatedData);
     }
 
-    // results[0].validMessage = 'O arquivo foi validado com sucesso! Revise os dados e clique em Atualizar para salvar as alterações.'
     req.body = results;
     return res.json(results);
-    // next();
   })
   .on('error', (err) => {
     res.status(400).json({ error: err.message });
   });
-
 };
-
 
 const validatePrice = (product, newPrice) => {
   const { sales_price, cost_price } = product[0][0];

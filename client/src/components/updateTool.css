@@ -23,7 +23,7 @@ body {
     /* border: 1px solid black; */
     display: flex;
     justify-content: center;
-    margin: 1rem;
+    margin-bottom: 1rem;
 }
 
 .product-card {
@@ -68,12 +68,6 @@ body {
 .csv-link:hover {
     background-color: #2EA566;
 }
-
-/* .product-card p:nth-child(even) {
-    color: #666;
-  } */
-
-
 
 h1 {
     font-size: 2rem;
@@ -132,6 +126,17 @@ input[type="file"] {
     background-color: var(--gray-medium);
     color: white;
 }
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* .container img {
+    margin-right: 5px;
+} */
+
 
 button {
     background-color: var(--green);

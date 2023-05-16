@@ -36,7 +36,6 @@ async function connect() {
     for (const query of queries) {
       try {
         await connection.query(query);
-        // console.log(`Query executada com sucesso: ${query}`);
       } catch (error) {
         console.error(`Erro ao executar query: ${query}\n`, error);
       }

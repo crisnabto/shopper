@@ -15,7 +15,6 @@ const getProductByCode = async (req, res) => {
 const updatePrice = async (req, res) => {
   const { code } = req.params;
   const { price } = req.body;
-  console.log(price);
   const { type, message, error } = await productsService.updatePrice(code, price);
   if (error) return res.status(404).json({ message: error });
   return res.status(type).json(message);
